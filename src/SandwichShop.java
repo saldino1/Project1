@@ -1,24 +1,62 @@
 import java.util.Scanner;
 
-public class SandwichShop {
+/**
+ * The SandwichShop class maintains information about the 
+ * operating hours, pricing and average delivery time of a sandwich shop
+ * @author Amelia Saldino
+ */
 
+
+public class SandwichShop {
+    /**Constant storing the month number of october */
     public static final int OCTOBER = 10;
+
+    /**Constant storing the month number of december */
     public static final int DECEMBER = 12;
+
+    /**Constant storing the earliest day in october orders can be made */
     public static final int OCT_DAY_CUTOFF = 15;
+
+    /**Constant storing the latest day in december orders can be made */
     public static final int DEC_DAY_CUTOFF = 31;
+
+    /**Constant storing the earliest hour of the day orders can be made*/
     public static final int TIME_START_HRS = 11;
+
+    /**Constant storing the latest hour of the day orders can be made */
     public static final int TIME_END_HRS = 6;
+
+    /**Constant storing the first minute of the hour that orders can be made */
     public static final int TIME_START_MINS = 0;
+
+    /**Constant sotring the last minute of the hour that orders can be made */
     public static final int TIME_END_MINS = 59;
+
+    /**Constant storing the current year */
     public static final int YEAR = 2024;
 
+    /**Constant storing the price of Chicken Supreme in cents */
     public static final int CHICKEN_PRICE = 525;
+
+    /**Constant storing the price of Burger Bonanza in cents */
     public static final int BURGER_PRICE = 550;
+    
+    /**Constant storing the price of Veggie Delite in cents */
     public static final int VEGGIE_PRICE = 495;
+
+    /**Constant storing the price of Water in cents */
     public static final int WATER_PRICE = 150;
+
+    /**Constant storing the price of Coffee in cents */
     public static final int COFFEE_PRICE = 195;
+
+    /**Constant storing the price of Chocolate Shake in cents */
     public static final int CHOCOLATE_PRICE = 355;
 
+    /**
+     * Starts the program and prompts user for inputs
+     * @param args Command line, not used
+     */
     public static void main(String[] args) {
         try(Scanner scanner = new Scanner(System.in)) {
 
@@ -100,49 +138,66 @@ public class SandwichShop {
         }
     }
 
-    //Returns true, if hour is a value ranging from 11 to 12 or 1 to 6 and min is a value from 0 to 59
-    //You may assume that the hour represents 11 AM, 12 NOON, or 1 - 6 PM.
-    //Returns false, otherwise
+    /**
+     * Gives a boolean representing if the time inputed is within opertating hours
+     * (11am - 6pm)
+     * @param hour the hour part of time
+     * @param min the minute part of time
+     * @return boolean that shows if a time is within operating hours
+     */
     public static boolean isValidTime(int hour, int min) {
-        boolean hrs = ((hour > 0 && hour < TIME_END_HRS )|| hour == TIME_START_HRS || hour == TIME_START_HRS + 1);
+        boolean hrs = ((hour > 0 && hour <= TIME_END_HRS )|| hour == TIME_START_HRS || hour == TIME_START_HRS + 1);
         boolean mins = (min >= TIME_START_MINS && min <= TIME_END_MINS);
         return (hrs && mins);      
     }
 
-    //Returns true, if the month and day represent a date that is between October 15 
-    //and December 31, inclusive.
-    //Returns false, otherwise
+    /**
+     * Gives a boolean representing if the date inputed is within dates of operation
+     * October 15 - December 31
+     * @param month the current month
+     * @param day the current day
+     * @return a boolean that shows if a given date is within operating dates
+     */
     public static boolean isValidDate(int month, int day) {
-        return (month > OCTOBER && month <= DECEMBER && day > 0 && day <= DEC_DAY_CUTOFF) || (month == OCTOBER && day >= OCT_DAY_CUTOFF);         
+        boolean novDecValid = (month > OCTOBER && month <= DECEMBER && day > 0 && day <= DEC_DAY_CUTOFF);
+        boolean octValid = (month == OCTOBER && day >= OCT_DAY_CUTOFF);
+        return novDecValid || octValid;         
     }
 
-    //Returns true, if the date falls on Monday - Thursday in 2024
-    //Returns false, otherwise 
-    //This method must use Zeller's Algorithm as described in the Implementation section below.
-    //
-    //Throws an IllegalArgumentException with the message, "Invalid date",  
-    //if the month and day do not represent a date that is between October 15 
-    //and December 31, inclusive.
-    //HINT: Use the isValidDate() method to determine this.   
+    /**
+     * Gives a boolean representing if a given day is a weekday
+     * (Monday, Tuesday, Wednesday, Thursday)
+     * Otherwise returns false
+     * @param month the given month
+     * @param day the given day
+     * @return boolean representing if it is a weekday
+     * @throws IllegalArgumentExeption if the date is outside of the operating dates (Oct 15 - Dec 31)
+     */  
     public static boolean isWeekday(int month, int day) {
         if(!isValidDate(month, day)){
             throw new IllegalArgumentException("Invalid date");
         }
 
-        int w = YEAR - (14 - month) / 12;
+        int w = YEAR - ((14 - month) / 12);
 
-        int x = w + w / 4 - w / 100 + w / 400;
+        int x = w + (w / 4) - (w / 100) + (w / 400);
 
         int z = month +  12 * ((14 - month) / 12) - 2;
 
-        return (day + x + (31 * z) / 12) % 7 > 4;
+        return ((day + x + (31 * z) / 12) % 7 > 0) && ((day + x + (31 * z) / 12) % 7 < 5);
     }
 
-    //Returns the cost of the order for the given number of each item, as specified above, 
-    //as an integer number of cents
-    //
-    //Throws an IllegalArgumentException with the message, "Invalid amount", if any parameter 
-    //value is negative
+    /**
+     * Returns the total cost in cents given the number of each of the items ordered
+     * @param chicken the number of Chicken Supremes ordered
+     * @param burger the number of Burger Bananzas ordered
+     * @param veggie the number of Veggie Delights ordered
+     * @param water the number of waters ordered
+     * @param coffee the number of coffees ordered
+     * @param shake the number of chocolate shakes ordered
+     * @return the total cost in cents given the quantity of each item ordered
+     * @throws IllegalArgumentExeption if any of the quantities ordered are negative
+     */
     public static int getOrderCost(int chicken, int burger, int veggie, 
     int water, int coffee, int shake) {
         if(chicken < 0 || burger < 0 || veggie < 0 || water < 0 || coffee < 0 || shake < 0){
@@ -151,31 +206,36 @@ public class SandwichShop {
         return (chicken * CHICKEN_PRICE) + (burger * BURGER_PRICE) + (veggie * VEGGIE_PRICE) + (water * WATER_PRICE) + (coffee * COFFEE_PRICE) + (shake * CHOCOLATE_PRICE);
     }
 
-    //Determines and returns the pickup time as a String in which the hour and minutes are separated
-    //by a colon (:), and minute values that are less than 10 are preceded by a 0. 
-    //For example, "3:05", "12:29", etc.
-    //HINT: Use the isWeekday() method to determine whether the date falls on weekday.
-    //
-    //Throws an IllegalArgumentException with the message, "Invalid date", if the date is invalid
-    //HINT: Use the isValidDate() method to determine this
-    //
-    //Throws an IllegalArgumentException with the message, "Invalid time", if the time is invalid
-    //HINT: Use the isValidTime() method to determine this
-    //
     // You must check for these error conditions in the order given above.
+    /**
+     * Determines and returns a string representing the pickup time depeding on if it is a weekday
+     * Time in format (hrs:mins) "3:09"
+     * @param month the month the order is placed during
+     * @param day the day the order is placed during
+     * @param hour the hour the order is placed during
+     * @param min the minute the order is placed during
+     * @return a string of the estimted time of pickup
+     * @throws IllegalArgumentException if order is placed outside of valid hours or valid dates
+     */
     public static String getPickupTime(int month, int day, int hour, int min) {
+        // Validates Dates and times are in operation
         if(!isValidDate(month, day)) {
             throw new IllegalArgumentException("Invalid date");
         }
         if(!isValidTime(hour, min)) {
             throw new IllegalArgumentException("Invalid time");
         }
+
         boolean weekday = isWeekday(month, day);
-        int mins = min + ((weekday) ? (20) : (30));
+        int mins = min + ((weekday) ? (20) : (30)); // Adds 30 mins if weekwend, 20 if weekday
         int hrs = hour;
+        // Trim based on time conventions
         if(mins > 59) {
             hrs = hrs + 1;
             mins -= 60;
+        }
+        if(hrs > 12) {
+            hrs = hrs - 12;
         }
         boolean minLessThan10 = mins < 10;
         String hrsFinal = Integer.toString(hrs);
